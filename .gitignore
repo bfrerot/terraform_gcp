@@ -1,8 +1,13 @@
 # Ignorer TOUS les dossiers .terraform et leurs contenus
 **/.terraform/*
+**/terraform.tfstate
+**/terraform.tfstate.backup
+
 
 # Ignorer le fichier .terraform.lock.hcl spécifique
 first_instance/.terraform.lock.hcl
+
+/terraform_gcp/first_instance/.terraform/**
 
 # Ignorer les autres fichiers/dossiers
 navet_gcp.jpg

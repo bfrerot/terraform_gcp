@@ -10,7 +10,7 @@ boot_disk {
     }
   }
 
-network_interface {
+network_interface { # comment
     network = "default"
   }
 }
