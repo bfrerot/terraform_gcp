@@ -1,0 +1,103 @@
+########## First terraform init/plan/apply + Authentification ##########
+
+
+### GCP SA - Service account
+
+First, we need a service account to be able to authenticate our terraform requests.
+On GCP/IAM/Service Accounts
+Create a new one and name it accordingly to your convention
+Set it as Editor (Owner not needed)
+Here, let's be clear, we want to facilitate our work, so 1*SA is enough.
+In the real world, it is highly recommmanded (if not enforced) to split SA between services, like Linux COmpute, Storage, NetSec, etc.
+Keep it in mind, you may try to create dedicated SAs if you wish to.
+
+Once the SA created, you need to Add key, JSON format.
+The Key has an ID and a JSON file downloaded automatically, containing the real key, so keep it safe, even for your lab.
+In my case it is kept locally, insert in gitignore.
+Several safe solution will have to be tested, Cloud option and Terraform Vault to start.
+
+
+### Install GCP SDK gcloud
+==> https://cloud.google.com/sdk/docs/install-sdk
+The Online guide is quite good and easy to follow
+It's mandatory to be able to configure som GCP variables on the computer you work from
+
+
+### Configuring Terraform First project
+I do like starting from something working, analyse how it works, and learn this way.
+You may prefer spend time to read Online documentation, it is maybe a better way.
+
+Below the minimal configuration I Set up to start and build my well known "First Instance"
+
+
+*** provider.tf file
+
+terraform {
+  required_providers {
+    google = {                                          # invokes the hashicorp registry to download gcp tools
+      source  = "hashicorp/google"
+      version = "~> 7.0.0"                              # latest version at the time I am writing this
+    }
+  }
+}
+
+provider "google" {
+  project     = "carbon-gecko-472110-u1"                # GCP project ID, unique like a mac address, attached to the name you gave to your project
+  region      = "europe-west9"                          # default region you want to be applied
+  zone        = "europe-west9-a"                        # default zone you want to be applied (= region + dc)
+  credentials = file(var.path)                          # credential configuration to retrieve your SA access key
+}
+
+
+*** main.tf file
+
+resource "google_compute_instance" "movingcastle-001" {  # resource != name, needs to be understood
+name = "movingcastle-001-first-instance"                 # set a name you want for your instance
+machine_type = "e2-micro"                                # the cheapest to start
+zone = "europe-west9-a"                                  # my preferred zone (region + zone a, b or c or else
+project = "carbon-gecko-472110-u1"                       # GCP project ID, unique like a mac address, attached to the name you gave to your project
+
+boot_disk {
+    initialize_params {
+        image = "debian-13"                              # install a debian 13 os
+    }
+  }
+
+network_interface {
+    network = "default"                                  # default network parameters
+  }
+}
+
+
+*** variable.tf file
+
+variable "path" {
+  description = "Path to the service account key file"
+  type        = string
+  default     = "C:/terraform_gcp/credentials/secret.json"
+}
+
+
+==> With this minimal set up we are able to launch our first terraform commands
+Open a cli and place yourself in the folder where your files are
+terraform init = will install plugins the first time
+terraform init -upgrade = to upgrade your provider version if needed/wanted
+
+terraform plan = check the code structure
+terrafrom apply = do the magic, if anything is not possible, it will occur here
+terraform destroy = do not forget to keep your bill low or free
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

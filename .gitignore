@@ -1,0 +1,9 @@
+# Ignorer TOUS les dossiers .terraform et leurs contenus
+**/.terraform/*
+
+# Ignorer le fichier .terraform.lock.hcl spécifique
+first_instance/.terraform.lock.hcl
+
+# Ignorer les autres fichiers/dossiers
+navet_gcp.jpg
+credentials/secret.json

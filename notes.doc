@@ -1,0 +1,19 @@
+########## GCP notes ########## 
+
+##### COMPUTE
+
+Computing service; CPU, memory, disk etc
+
+4 main services in GCP:
+
+Compute/Virutal Engine  ==> Infrastructure, full control
+Kubernetes Engine ==> Containers
+App Engine ==> web apps and APIs
+Cloud Function ==> event driven
+
+
+Comuting services in the Cloud:
+
+Virtual machine
+Code & Container
+Serverless
