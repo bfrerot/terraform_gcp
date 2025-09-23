@@ -12,3 +12,29 @@ first_instance/.terraform.lock.hcl
 # Ignorer les autres fichiers/dossiers
 navet_gcp.jpg
 credentials/secret.json
+
+# ---------------------------------------------------------------
+# Ignore all files/folders linked to Terraform
+# ---------------------------------------------------------------
+
+# Ignore ALL folders .terraform and what they contain
+**/.terraform/
+
+# Ignore all files state Terraform (everywhere in the repo)
+**/terraform.tfstate
+**/terraform.tfstate.backup
+
+# Ignore all files .terraform.lock.hcl (everywhere in the repo)
+**/.terraform.lock.hcl
+
+# ---------------------------------------------------------------
+# Fichiers spécifiques à ignorer
+# ---------------------------------------------------------------
+
+# Fichiers sensibles
+navet_gcp.jpg
+credentials/secret.json
+
+# Dossier spécifique (si vraiment nécessaire, mais **/.terraform/ suffit normalement)
+#terraform_gcp/first_instance/.terraform/
+

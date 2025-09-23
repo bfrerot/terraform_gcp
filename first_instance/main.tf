@@ -1,8 +1,9 @@
 resource "google_compute_instance" "movingcastle-001" {
 name = "test"
 machine_type = "e2-micro"
-zone = "europe-west9-a"
+zone = "europe-west9-b"
 project = "carbon-gecko-472110-u1"
+
 
 boot_disk {
     initialize_params {
@@ -11,7 +12,7 @@ boot_disk {
   }
 
 network_interface { # comment
-    network = "default"
+    network = "default"  # comment
   }
 }
 
