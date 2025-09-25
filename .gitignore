@@ -35,6 +35,3 @@ credentials/secret.json
 navet_gcp.jpg
 credentials/secret.json
 
-# Dossier spécifique (si vraiment nécessaire, mais **/.terraform/ suffit normalement)
-#terraform_gcp/first_instance/.terraform/
-

@@ -1,0 +1,40 @@
+########## SERVICES ##########
+
+
+API Gateway : Create, publish, manage, monitor, and secure APIs at any scale
+
+Artifact Registry : Package manager for storing and managing build artifacts and dependencies
+
+Backup : Backup and restore data
+
+Cloud Build : Executes builds
+
+Cloud Functions : Serverless compute service to run code in response to events
+
+Cloud Run : Managed compute platform to deploy containers directly scalable infrastructure
+
+Cloud Storage : Store and access digital data on remote servers
+
+Compute Engine : Manage virtual machines
+
+Filestore : NFS file server service on Google Cloud
+
+Identity and Access Management (IAM) : Manage access and permissions for users and resources
+
+Key Management Service (KMS) : Manage encryption keys to protect sensitive data
+
+Google Kubernetes Engine (GKE) : Deploying containerized applications on Google Cloud
+
+Monitoring : Monitor the performance of systems, networks, and operational infrastructures
+
+Patch Management : Manage updates and patches for operating systems and applications
+
+Secrets Manager : Store and manage sensitive information such as passwords, OAuth tokens, and SSH keys
+
+Security Operation Center (SOC)
+or                                    Vulnerability and threat reporting service
+Security Common Center
+
+Vertex AI : Developing, training, and deploying machine learning models
+
+Workflows : Create, run, and manage automated workflows to orchestrate services and tasks
