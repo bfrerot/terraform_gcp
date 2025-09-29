@@ -1,0 +1,20 @@
+########## COMPUTE Resources ##########
+
+
+### Snapshot 
+==> copy of data on a persistent disk
+can be a copy of a bootable disk
+incrementing mode
+
+
+### Image
+==> copy of a disk
+used to create VMs
+single complete backup
+can be created from:
+    images
+    disks
+    Snapshot
+    cloud storage file
+    virtual disk
+

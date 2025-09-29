@@ -1,0 +1,46 @@
+### Hierarchy
+
+Organization 
+    "Folder"
+        Project
+
+
+                               
+Organization
+==> for personnal account = No organization
+gcp.navet@gmail.com
+
+Folder
+building blocks of multilayer organizational hierarchies
+OPTIONAL and do not have to be used
+
+Project
+most important part of the hierarchy
+It is in projects that we create resources, use Google Cloud services, manage permissions, and manage billing options
+Any account has the 2 roles:
+    resourcemanager.projects.create IAM
+    Billing Account Creator role
+
+
+
+### Roles
+
+# Basic roles
+Owner, Editor, and Viewer
+
+# Predefined roles
+best practice to use
+predefined roles instead of basic roles when possible
+specific to Google Cloud products and managed and updated by Google
+
+# Custom roles
+allow cloud administrators to create and administer their own roles
+some permission, such as iam.ServiceAccounts.getAccessToken, are not available in custom roles
+
+
+### Service Accounts
+two types of service accounts: 
+    user-managed service accounts 
+    Googlemanaged service accounts
+When we create a project that has the Compute Engine API enabled, a Compute Engine service
+account is created automatically

@@ -1,0 +1,108 @@
+########## GCLOUD commands ##########
+
+### list zones available
+
+gcloud compute zones list
+
+
+
+### create a VM
+
+gcloud compute instances create movingcastlevm3 \
+    --project=carbon-gecko-472110-u1 \
+    --zone=europe-west9-b \
+    --description=test\ \
+gcloud \
+    --machine-type=n2-standard-2 \
+    --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY,subnet=default \
+    --metadata=enable-osconfig=TRUE \
+    --can-ip-forward \
+    --maintenance-policy=MIGRATE \
+    --provisioning-model=STANDARD \
+    --local-ssd-recovery-timeout=1 \
+    --service-account=778804135717-compute@developer.gserviceaccount.com \
+    --scopes=https://www.googleapis.com/auth/cloud-platform \
+    --min-cpu-platform=Intel\ \
+Ice\ Lake \
+    --enable-display-device \
+    --tags=https-server \
+    --create-disk=auto-delete=yes,boot=yes,device-name=movingcastlevm3,image=projects/debian-cloud/global/images/debian-12-bookworm-v20250910,mode=rw,size=10,type=pd-balanced \
+    --create-disk=device-name=disk-ssd-movingcastle3,mode=rw,name=disk-ssd-movingcastle3,size=10,type=pd-ssd \
+    --local-ssd=interface=NVME \
+    --no-shielded-secure-boot \
+    --shielded-vtpm \
+    --shielded-integrity-monitoring \
+    --labels=goog-ops-agent-policy=v2-x86-template-1-4-0,goog-ec-src=vm_add-gcloud \
+    --reservation-affinity=any \
+    --threads-per-core=1 \
+&& \
+printf 'agentsRule:\n  packageState: installed\n  version: latest\ninstanceFilter:\n  inclusionLabels:\n  - labels:\n      goog-ops-agent-policy: v2-x86-template-1-4-0\n' > config.yaml \
+&& \
+gcloud compute instances ops-agents policies create goog-ops-agent-v2-x86-template-1-4-0-europe-west9-b \
+    --project=carbon-gecko-472110-u1 \
+    --zone=europe-west9-b \
+    --file=config.yaml
+
+gcloud compute instances create movingcastlevm3 --project=carbon-gecko-472110-u1 --zone=europe-west9-b --description=test --machine-type=n2-standard-2 --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY,subnet=default --metadata=enable-osconfig=TRUE --can-ip-forward --maintenance-policy=MIGRATE --provisioning-model=STANDARD --local-ssd-recovery-timeout=1 --service-account=778804135717-compute@developer.gserviceaccount.com --scopes=https://www.googleapis.com/auth/cloud-platform --min-cpu-platform='Intel Ice Lake' --enable-display-device --tags=https-server --create-disk=auto-delete=yes,boot=yes,device-name=movingcastlevm3,image=projects/debian-cloud/global/images/debian-12-bookworm-v20250910,mode=rw,size=10,type=pd-balanced --create-disk=device-name=disk-ssd-movingcastle3,mode=rw,name=disk-ssd-movingcastle3,size=10,type=pd-ssd --local-ssd=interface=NVME --no-shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring --labels=goog-ops-agent-policy=v2-x86-template-1-4-0,goog-ec-src=vm_add-gcloud --reservation-affinity=any --threads-per-core=1 && printf 'agentsRule:\n  packageState: installed\n  version: latest\ninstanceFilter:\n  inclusionLabels:\n  - labels:\n      goog-ops-agent-policy: v2-x86-template-1-4-0\n' > config.yaml && gcloud compute instances ops-agents policies create goog-ops-agent-v2-x86-template-1-4-0-europe-west9-b --project=carbon-gecko-472110-u1 --zone=europe-west9-b --file=config.yaml
+
+
+### starting a VM
+
+gcloud compute instances start INSTANCE_1 INSTANCE_X
+
+
+
+### stopping a VM
+
+gcloud compute instances stop INSTANCE_1 INSTANCE_X
+
+
+
+### deleting a VM
+
+gcloud compute instances delete movingcastlevm1 --zone=europe-west9-b
+
+gcloud compute instances delete movingcastlevm1 --zone=europe-west9-b --project=carbon-gecko-472110-u1 --keep-disks=all --quiet
+
+
+
+### inventoring VMs
+
+gcloud compute instances list
+
+gcloud compute instances list --filter="zone=europe-west9-b"
+
+
+
+### create a VM Snapshot
+
+gcloud beta compute snapshots create snapshot-2 
+    --project=carbon-gecko-472110-u1 \
+    --description=test \
+    --labels=navet=vm1 \
+    --source-disk=movingcastlevm1 \
+    --source-disk-zone=europe-west9-b \
+    --guest-flush \
+    --storage-location=europe-west9
+
+gcloud compute disks snapshot DISK_NAME --snapshot-names=NAME
+
+
+
+### list snapshots
+
+gcloud compute snapshots list
+
+
+
+### create a vm image
+
+gcloud compute images create imagevm1 \
+    --project=carbon-gecko-472110-u1 \
+    --description=test \
+    --source-disk=movingcastlevm1 \
+    --source-disk-zone=europe-west9-b \
+    --labels=navet=vm1 \
+    --storage-location=europe-west9
+
+gcloud compute images create imagevm1 --project=carbon-gecko-472110-u1 --description=test --source-disk=movingcastlevm1 --source-disk-zone=europe-west9-b --labels=navet=vm1 --storage-location=europe-west9
