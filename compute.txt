@@ -1,5 +1,44 @@
 ########## COMPUTE Resources ##########
 
+### Instance
+instance is:
+    - contained in a project
+    - a Region and zone
+
+
+### App Engine
+app engine is:
+    - contained in a project
+    - a Region and zone
+    - BUT not any user management on resources, we just provide code to be run
+    - resources based on instance class opted 
+
+    => Standard
+    => Flexible
+        Standard + abilitity to configure containers
+        For apps composed by services, each being containerized
+
+==> good choice for a computing platform when you have little need to configure and control the underlying operating system or storage system
+
+ 
+### Kubernetes Engine
+GKE:
+    - Standard = pay for node + management by user
+    - Autopilot = pay for node + gcloud auto management
+
+
+### Anthos
+increasingly important service that is used to managed services and resources across clouds and on-premises environments
+
+
+### Cloud run
+used to deploy stateless containers
+to run code in containers without managing infrastructure
+
+
+### Cloud Functions
+serverless computing platform designed to run single-purpose pieces of code in response to events in the Google Cloud environment
+
 
 ### Snapshot 
 ==> copy of data on a persistent disk

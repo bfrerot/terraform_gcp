@@ -1,5 +1,26 @@
 ########## GCLOUD commands ##########
 
+
+### check default config
+==> gcloud config list
+[accessibility]
+screen_reader = False
+[compute]
+region = europe-west9
+zone = europe-west9-a
+[core]
+account = gcp.navet@gmail.com
+disable_usage_reporting = False
+project = carbon-gecko-472110-u1
+
+Your active configuration is: [default]
+
+==> gcloud config configurations list
+NAME     IS_ACTIVE  ACCOUNT              PROJECT                 COMPUTE_DEFAULT_ZONE  COMPUTE_DEFAULT_REGION
+default  True       gcp.navet@gmail.com  carbon-gecko-472110-u1  europe-west9-a        europe-west9
+
+
+
 ### list zones available
 
 gcloud compute zones list
@@ -8,42 +29,21 @@ gcloud compute zones list
 
 ### create a VM
 
-gcloud compute instances create movingcastlevm3 \
-    --project=carbon-gecko-472110-u1 \
-    --zone=europe-west9-b \
-    --description=test\ \
-gcloud \
-    --machine-type=n2-standard-2 \
-    --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY,subnet=default \
-    --metadata=enable-osconfig=TRUE \
-    --can-ip-forward \
-    --maintenance-policy=MIGRATE \
-    --provisioning-model=STANDARD \
-    --local-ssd-recovery-timeout=1 \
-    --service-account=778804135717-compute@developer.gserviceaccount.com \
-    --scopes=https://www.googleapis.com/auth/cloud-platform \
-    --min-cpu-platform=Intel\ \
-Ice\ Lake \
-    --enable-display-device \
-    --tags=https-server \
-    --create-disk=auto-delete=yes,boot=yes,device-name=movingcastlevm3,image=projects/debian-cloud/global/images/debian-12-bookworm-v20250910,mode=rw,size=10,type=pd-balanced \
-    --create-disk=device-name=disk-ssd-movingcastle3,mode=rw,name=disk-ssd-movingcastle3,size=10,type=pd-ssd \
-    --local-ssd=interface=NVME \
-    --no-shielded-secure-boot \
-    --shielded-vtpm \
-    --shielded-integrity-monitoring \
-    --labels=goog-ops-agent-policy=v2-x86-template-1-4-0,goog-ec-src=vm_add-gcloud \
-    --reservation-affinity=any \
-    --threads-per-core=1 \
-&& \
-printf 'agentsRule:\n  packageState: installed\n  version: latest\ninstanceFilter:\n  inclusionLabels:\n  - labels:\n      goog-ops-agent-policy: v2-x86-template-1-4-0\n' > config.yaml \
-&& \
-gcloud compute instances ops-agents policies create goog-ops-agent-v2-x86-template-1-4-0-europe-west9-b \
-    --project=carbon-gecko-472110-u1 \
-    --zone=europe-west9-b \
-    --file=config.yaml
+# simplest
+gcloud compute instances create ace-instance-1 --zone=europe-west9-a --machine-type=e2-standard-2
+Created [https://www.googleapis.com/compute/v1/projects/carbon-gecko-472110-u1/zones/europe-west9-a/instances/ace-instance-1].
+NAME            ZONE            MACHINE_TYPE   PREEMPTIBLE  INTERNAL_IP  EXTERNAL_IP     STATUS
+ace-instance-1  europe-west9-a  e2-standard-2               10.200.0.26  34.163.145.103  RUNNING
 
-gcloud compute instances create movingcastlevm3 --project=carbon-gecko-472110-u1 --zone=europe-west9-b --description=test --machine-type=n2-standard-2 --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY,subnet=default --metadata=enable-osconfig=TRUE --can-ip-forward --maintenance-policy=MIGRATE --provisioning-model=STANDARD --local-ssd-recovery-timeout=1 --service-account=778804135717-compute@developer.gserviceaccount.com --scopes=https://www.googleapis.com/auth/cloud-platform --min-cpu-platform='Intel Ice Lake' --enable-display-device --tags=https-server --create-disk=auto-delete=yes,boot=yes,device-name=movingcastlevm3,image=projects/debian-cloud/global/images/debian-12-bookworm-v20250910,mode=rw,size=10,type=pd-balanced --create-disk=device-name=disk-ssd-movingcastle3,mode=rw,name=disk-ssd-movingcastle3,size=10,type=pd-ssd --local-ssd=interface=NVME --no-shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring --labels=goog-ops-agent-policy=v2-x86-template-1-4-0,goog-ec-src=vm_add-gcloud --reservation-affinity=any --threads-per-core=1 && printf 'agentsRule:\n  packageState: installed\n  version: latest\ninstanceFilter:\n  inclusionLabels:\n  - labels:\n      goog-ops-agent-policy: v2-x86-template-1-4-0\n' > config.yaml && gcloud compute instances ops-agents policies create goog-ops-agent-v2-x86-template-1-4-0-europe-west9-b --project=carbon-gecko-472110-u1 --zone=europe-west9-b --file=config.yaml
+# deeply accurate
+gcloud compute instances create movingcastlevm3 --project=carbon-gecko-472110-u1 --zone=europe-west9-b --description=test --machine-type=n2-standard-2 --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY,subnet=default --metadata=enable-osconfig=TRUE --can-ip-forward --maintenance-policy=MIGRATE --provisioning-model=STANDARD --local-ssd-recovery-timeout=1 --service-account=778804135717-compute@developer.gserviceaccount.com --scopes=https://www.googleapis.com/auth/cloud-platform --min-cpu-platform="Intel Ice Lake" --enable-display-device --tags=https-server --create-disk=auto-delete=yes,boot=yes,device-name=movingcastlevm3,image=projects/debian-cloud/global/images/debian-12-bookworm-v20250910,mode=rw,size=10,type=pd-balanced --create-disk=device-name=disk-ssd-movingcastle3,mode=rw,name=disk-ssd-movingcastle3,size=10,type=pd-ssd --local-ssd=interface=NVME --no-shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring --labels=goog-ops-agent-policy=v2-x86-template-1-4-0,goog-ec-src=vm_add-gcloud --reservation-affinity=any --threads-per-core=1
+
+# adding a startup script 
+???????
+
+# create a spot VM
+gcloud compute instances create my-spot-vm --project=<PROJECT_ID> --zone=europe-west9-b --machine-type=n2-standard-2 --provisioning-model=SPOT --create-disk=auto-delete=yes,boot=yes,image=projects/debian-cloud/global/images/debian-12-bookworm-v20250910,mode=rw,size=10
+       
 
 
 ### starting a VM
@@ -60,16 +60,20 @@ gcloud compute instances stop INSTANCE_1 INSTANCE_X
 
 ### deleting a VM
 
+# better to add zone information
 gcloud compute instances delete movingcastlevm1 --zone=europe-west9-b
 
+# if we went to keep disks
 gcloud compute instances delete movingcastlevm1 --zone=europe-west9-b --project=carbon-gecko-472110-u1 --keep-disks=all --quiet
 
 
 
 ### inventoring VMs
 
+# all project instances
 gcloud compute instances list
 
+# all project instances in a particular zone
 gcloud compute instances list --filter="zone=europe-west9-b"
 
 
