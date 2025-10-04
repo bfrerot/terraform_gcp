@@ -1,6 +1,13 @@
 ########## GCLOUD commands ##########
 
 
+
+### special parameters
+
+--async == details all the process
+
+
+
 ### check default config
 ==> gcloud config list
 [accessibility]
@@ -74,6 +81,9 @@ gcloud compute instances delete movingcastlevm1 --zone=europe-west9-b
 # if we went to keep disks
 gcloud compute instances delete movingcastlevm1 --zone=europe-west9-b --project=carbon-gecko-472110-u1 --keep-disks=all --quiet
 
+# keeping disk, here bot disk
+gcloud compute instances delete ch06-instance-1 ––keep-disks=boot
+
 
 
 ### inventoring VMs
@@ -83,6 +93,80 @@ gcloud compute instances list
 
 # all project instances in a particular zone
 gcloud compute instances list --filter="zone=europe-west9-b"
+
+# all but in json format
+gcloud compute instances list --format=json
+
+# describe an instance with all fields
+gcloud compute instances describe INSTANCE_NAME
+
+
+
+### create a instance template
+
+gcloud beta compute instance-groups managed create movingcastle-ig-1 \
+    --project=carbon-gecko-472110-u1 \
+    --base-instance-name=movingcastle-ig-1 \
+    --template=projects/carbon-gecko-472110-u1/regions/europe-west9/instanceTemplates/movingcastle-it-n2d-standard-2-03 \
+    --size=1 \
+    --zone=europe-west9-a \
+    --default-action-on-vm-failure=repair \
+    --action-on-vm-failed-health-check=default-action \
+    --no-force-update-on-repair \
+    --standby-policy-mode=manual \
+    --list-managed-instances-results=pageless \
+&& \
+gcloud beta compute instance-groups managed set-autoscaling movingcastle-ig-1 \
+    --project=carbon-gecko-472110-u1 \
+    --zone=europe-west9-a \
+    --mode=on \
+    --min-num-replicas=1 \
+    --max-num-replicas=10 \
+    --target-cpu-utilization=0.6 \
+    --cpu-utilization-predictive-method=none \
+    --cool-down-period=60
+
+
+
+### delete an instance template
+
+gcloud compute instance-templates delete movingcastle-it-n2-standard-2-02
+
+
+
+###create an instance group
+
+gcloud beta compute instance-groups managed create instance-group-1 \
+    --project=carbon-gecko-472110-u1 \
+    --base-instance-name=instance-group-1 \
+    --description=test \
+    --template=projects/carbon-gecko-472110-u1/global/instanceTemplates/movingcastle-it-n2-standard-2-02 \
+    --size=1 \
+    --zones=europe-west9-a,europe-west9-b,europe-west9-c \
+    --target-distribution-shape=EVEN \
+    --instance-redistribution-type=proactive \
+    --default-action-on-vm-failure=repair \
+    --action-on-vm-failed-health-check=default-action \
+    --no-force-update-on-repair \
+    --standby-policy-mode=manual \
+    --list-managed-instances-results=pageless \
+&& \
+gcloud beta compute instance-groups managed set-autoscaling instance-group-1 \
+    --project=carbon-gecko-472110-u1 \
+    --region=europe-west9 \
+    --mode=on \
+    --min-num-replicas=1 \
+    --max-num-replicas=10 \
+    --target-cpu-utilization=0.6 \
+    --cpu-utilization-predictive-method=none \
+    --cool-down-period=60
+
+
+
+### delete an instance group
+
+# if distributed over multi-zones, we have to specify the region
+gcloud compute instance-groups managed delete movingcastle-ig-2 --region="europe-west9"
 
 
 
@@ -129,3 +213,31 @@ gcloud compute images export --destination-uri=DESTINATION_URI ––image=IMAGE
 ### create instance template
 
 gcloud beta compute instance-templates create movingcastle-it-2 --project=carbon-gecko-472110-u1 --machine-type=n2-standard-2 --network-interface=network=default,network-tier=PREMIUM,stack-type=IPV4_ONLY --instance-template-region=europe-west9 --can-ip-forward --no-restart-on-failure --maintenance-policy=TERMINATE --provisioning-model=SPOT --instance-termination-action=STOP --discard-local-ssds-at-termination-timestamp=true --service-account=778804135717-compute@developer.gserviceaccount.com --scopes=https://www.googleapis.com/auth/cloud-platform --enable-display-device --tags=https-server,lb-health-check --create-disk=auto-delete=yes,boot=yes,device-name=movingcastle-it-2,image=projects/debian-cloud/global/images/debian-12-bookworm-v20250910,mode=rw,size=10,type=pd-balanced --create-disk=device-name=persistent-disk-1,mode=rw,size=100,type=pd-ssd --local-ssd=interface=NVME --no-shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring --reservation-affinity=none
+
+
+
+### create a gke autopilot cluster
+
+gcloud beta container --project "carbon-gecko-472110-u1" clusters create-auto "movingcastle-gke-cluster-1" --region "europe-west9" --release-channel "regular" --enable-dns-access --no-enable-google-cloud-access --network "projects/carbon-gecko-472110-u1/global/networks/default" --subnetwork "projects/carbon-gecko-472110-u1/regions/europe-west9/subnetworks/default" --cluster-ipv4-cidr "/17" --binauthz-evaluation-mode=DISABLED --scopes=https://www.googleapis.com/auth/cloud-platform
+
+gcloud container clusters create ch07-cluster-1 --num-nodes=4
+
+
+
+### install kubectl gcoud commands
+
+gcloud components install kubectl
+
+
+
+### create a cluster with kubectl
+
+kubectl create deployment app-deploy1 --image=app1 --port=8080
+
+
+
+### adapt replicas number with kubectl
+
+kubectl scale deployment app-deploy1 --replicas=5
+
+kubectl scale deployment ch07-app-deploy --replicas=10
