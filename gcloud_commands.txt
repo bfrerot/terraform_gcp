@@ -38,6 +38,11 @@ gcloud compute instances list --filter="zone:ZONE"
 
 
 
+
+################################  INSTANCES
+
+
+
 ### create a VM
 
 # simplest
@@ -216,6 +221,10 @@ gcloud beta compute instance-templates create movingcastle-it-2 --project=carbon
 
 
 
+
+################################  KUBERNETES
+
+
 ### create a gke autopilot cluster
 
 gcloud beta container --project "carbon-gecko-472110-u1" clusters create-auto "movingcastle-gke-cluster-1" --region "europe-west9" --release-channel "regular" --enable-dns-access --no-enable-google-cloud-access --network "projects/carbon-gecko-472110-u1/global/networks/default" --subnetwork "projects/carbon-gecko-472110-u1/regions/europe-west9/subnetworks/default" --cluster-ipv4-cidr "/17" --binauthz-evaluation-mode=DISABLED --scopes=https://www.googleapis.com/auth/cloud-platform
@@ -241,3 +250,230 @@ kubectl create deployment app-deploy1 --image=app1 --port=8080
 kubectl scale deployment app-deploy1 --replicas=5
 
 kubectl scale deployment ch07-app-deploy --replicas=10
+
+
+
+### viewing the status of Kubernetes Clusters
+/!\ the service was originally called Google Container Engine
+In November 2017, Google renamed the service Kubernetes Engine, but the gcloud commands remained the same
+
+gcloud container clusters list 
+
+# en detail
+gcloud container clusters describe --zone=REGION CLUSTER_NAME
+
+
+
+### list information about nodes and pods
+/!\ we need to use kubectl
+
+gcloud container clusters get-credentials --zone=REGION CLUSTER_NAME
+
+
+
+### modify nodes number
+
+number of nodes we specify in the command will be:
+==> the number of nodes in the pool if we are using a zonal cluster
+==> the number of nodes for each zone the node pool is in if you are using a regional cluster
+
+gcloud container clusters resize CLUSTER_NAME --node-pool default- pool –num-nodes 5 --region=REGION
+
+
+
+### update a cluster
+
+gcloud container clusters update CLUSTER_NAME --enable-autoscaling --min-nodes 1 --max-nodes 5 --zone ZONE --node-pool default-pool
+
+
+
+### list deployments
+
+kubectl get deployments
+
+
+
+### modify the deployment scale
+
+kubectl scale deployment nginx-1 --replicas 5
+
+
+
+### configure autoscale
+
+kubectl autoscale deployment DEPLOYMENT_NAME --max 10 --min 1 --cpu-percent 80
+
+
+
+### remove a deployment
+
+kubectl delete deployment DEPLOYMENT_NAME
+
+
+
+### add a service
+
+kubectl create deployment DEPLOYMENT_NAME --image=gcr.io/google/samples/hello-app:1.0 --port 8080
+
+
+
+### expose a service
+
+kubectl expose deployment DEPLOYMENT_NAME --type="LoadBalancer"
+
+
+
+### remove a service
+
+kubectl delete service DEPLOYMENT_NAME
+
+
+
+
+################################  CLOUD RUN
+
+
+### create a Cloud Run 
+
+gcloud alpha run deploy hello \
+--image=us-docker.pkg.dev/cloudrun/container/hello \
+--no-invoker-iam-check \
+--port=8080 \
+--service-account=778804135717-compute@developer.gserviceaccount.com \
+--region=europe-west1 \
+--project=carbon-gecko-472110-u1
+
+
+
+
+################################# STORAGE 
+
+### create a REDIS instance, standard
+gcloud redis instances create --project=carbon-gecko-472110-u1  movingcastle-redis-001 --tier=basic --size=16 --region=europe-west9 --redis-version=redis_7_2 --network=projects/carbon-gecko-472110-u1/global/networks/default --connect-mode=DIRECT_PEERING --display-name="movingcastle-redis-001"
+
+
+
+
+
+
+#################################  VPC
+
+### create in an auto-mode, in default project
+gcloud compute networks create ace-exam-vpc1 --subnet-mode=auto
+
+
+
+### en mode custom
+gcloud compute networks create ace-exam-vpc1 --subnet-mode=custom
+gcloud compute networks subnets create ace-exam-vpc-subnet1 --network=ace-exam-vpc1 --region=us-west2 --range=10.10.0.0/16 --enable-private-ip-google-access --enable-flow-logs
+
+
+
+### create a shared VPC
+
+1- assign the Shared VPC Admin role, which uses the descriptor roles/compute.xpnAdmin, issue this command:
+gcloud organizations add-iam-policy-binding [ORG_ID] --member='user:[EMAIL_ADDRESS]' --role="roles/compute.xpnAdmin"
+gcloud resource-manager folders add-iam-policy-binding [FOLDER_ID] --member='user:[EMAIL_ADDRESS]' --role="roles/compute.xpnAdmin"
+
+to get ORAGNIZATION ID
+gcloud organizations list
+
+to get FOLDER ID 
+gcloud resource-manager folders list --organization=[ORG_ID]
+
+2 - enable shred vpc
+gcloud compute shared-vpc enable [HOST_PROJECT_ID]
+
+3- associate projects to shared VPC
+gcloud compute shared-vpc associated-projects add [SERVICE_PROJECT_ID] --host-project [HOST_PROJECT_ID]
+
+
+
+### create a VPC Peering
+
+1- A-side 
+gcloud compute networks peerings create peer-ace-exam-1 --network ace-exam-network-A --peer-project ace-exam-project-B --peer-network ace-exam-network-B --auto-create-routes
+
+2- B-side
+gcloud compute networks peerings create peer-ace-exam-1 --network ace-exam-network-B --peer-project ace-exam-project-A --peer-network ace-exam-network-A --auto-create-routes
+
+
+
+#################################  FW 
+
+
+### options
+--action
+--allow
+--description
+--destination-ranges
+--direction
+--network = VPC name
+--priority
+--source-ranges
+--source-service-accounts
+--source-tags
+--target-service-accounts
+--target-tags
+
+### create a FW rule
+gcloud compute firewall-rules create ace-exam-fwr2 --network ace-exam-vpc1 --allow tcp:20000-25000
+
+
+
+
+#################################  VPN
+
+gcloud compute target-vpn-gateways
+gcloud compute forwarding-rule
+gcloud compute vpn-tunnels
+
+gcloud compute vpn-tunnels create TUNNEL_NAME --peer-address=PEER_IP_ADDRESS --shared-secret=SHARED_SECRET --target-vpn-gateway=TARGET_VPN_GATEWAY
+
+gcloud compute forwarding-rules create NAME --TARGET_SPECIFICATION=VPN_GATEWAY
+
+
+
+
+
+#################################  DNS
+
+gcloud dns managed-zones
+gcloud dns record-sets transaction
+
+### create a managed public zone called ace-exam-zone1 with the DNS suffix aceexamzone.com
+gcloud dns managed-zones create ace-exam-zone1 --description= "A sample zone" --dns-name=aceexamzone.com
+
+### make this a private zone, we add the --visibility parameter set to private:
+gcloud dns managed-zones create ace-exam-zone1 --description= "A sample zone" --dns-name=aceexamzone.com. --visibility=private --networks=default
+
+### add an A record, we start a transaction, add the A record information, and then execute the transaction
+gcloud dns record-sets transaction start --zone=ace-exam-zone1
+gcloud dns record-sets transaction add 192.0.2.91 --name=aceexamzone.com. --ttl=300 --type=A --zone=ace-exam-zone1
+gcloud dns record-sets transaction execute --zone=ace-exam-zone1
+
+###  create a CNAME record, same process
+gcloud dns record-sets transaction start --zone=ace-exam-zone1
+gcloud dns record-sets transaction add server1.aceexamezone.com. --name=www2.aceexamzone.com. --ttl=300 --type=CNAME --zone=ace-exam-zone1
+gcloud dns record-sets transaction execute --zone=ace-exam-zone1
+
+
+
+
+#################################  IP ADRESSING
+
+### expand a subnet
+gcloud compute networks subnets expand-ip-range ace-exam-subnet1 --prefix-length 16
+
+### reduce a subnet IS NOT POSSIBLE
+
+
+
+
+
+
+
+
+
+
+
